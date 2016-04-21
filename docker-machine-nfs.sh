@@ -225,7 +225,8 @@ checkMachineRunning ()
 
   if [ "Running" != "${machine_state}" ]; then
     echoError "The machine '$1' is not running but '${machine_state}'!";
-    exit 1;
+    echoInfo "Start Docker Machine ... \n"
+    docker-machine start $1
   fi
 
   echoSuccess "OK"
