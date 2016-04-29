@@ -78,28 +78,28 @@ Examples:
     > Configure the /User folder with NFS and specific mount options.
 
 EOF
-  exit 0
+  return 2>&- || exit 0
 }
 
 # @info:    Prints error messages
 # @args:    error-message
 echoError ()
 {
-  echo "\033[0;31mFAIL\n\n$1 \033[0m"
+  printf "\033[0;31mFAIL\n\n$1 \033[0m\n"
 }
 
 # @info:    Prints warning messages
 # @args:    warning-message
 echoWarn ()
 {
-  echo "\033[0;33m$1 \033[0m"
+  printf "\033[0;33m$1 \033[0m\n"
 }
 
 # @info:    Prints success messages
 # @args:    success-message
 echoSuccess ()
 {
-  echo "\033[0;32m$1 \033[0m"
+  printf "\033[0;32m$1 \033[0m\n"
 }
 
 # @info:    Prints check messages
@@ -113,7 +113,7 @@ echoInfo ()
 # @args:    property-message
 echoProperties ()
 {
-  echo "\t\033[0;35m- $1 \033[0m"
+  printf "\t\033[0;35m- $1 \033[0m\n"
 }
 
 # @info:    Checks if a given property is set
@@ -315,7 +315,7 @@ lookupMandatoryProperties ()
     echoError "Could not find the virtualbox net IP!"; exit 1
   fi
 
-  echoSuccess "OK"
+  echoSuccess "\t\tOK"
 }
 
 # @info:    Configures the NFS
@@ -440,16 +440,16 @@ verifyNFSMount()
 # @info:    Displays the finish message
 showFinish()
 {
-  echo "\033[0;36m"
-  echo "--------------------------------------------"
-  echo
-  echo " The docker-machine '$prop_machine_name'"
-  echo " is now mounted with NFS!"
-  echo
-  echo " ENJOY high speed mounts :D"
-  echo
-  echo "--------------------------------------------"
-  echo "\033[0m"
+  printf "\033[0;36m--------------------------------------------\n"
+  printf "\n"
+  printf "\033[0;36m The docker-machine '$prop_machine_name'\n"
+  printf "\033[0;36m is now mounted with NFS!\n"
+  printf "\n"
+  printf "\033[0;36m ENJOY high speed mounts :D\n"
+  printf "\n"
+  printf "\033[0;36m--------------------------------------------\n"
+  printf "\e[0m\n"
+  eval `docker-machine env`
 }
 
 # END _functions
@@ -464,7 +464,7 @@ checkMachineRunning $prop_machine_name
 lookupMandatoryProperties $prop_machine_name
 
 if [ "$(isNFSMounted)" = "true" ] && [ "$prop_force_configuration_nfs" = false ]; then
-    echoSuccess "\n NFS already mounted." ; showFinish ; exit 0
+    echoSuccess "\n NFS already mounted." ; showFinish ; return 2>&- || exit 0
 fi
 
 echo #EMPTY LINE
